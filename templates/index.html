@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lerning Section</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <!-- พื้นหลังการ์ตูน -->
+    <div class="background">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+    </div>
+
+    <!-- หน้าแรก -->
+    <div class="landing-page" id="landingPage">
+        <div class="glass-container">
+            <h1 class="logo"><i class="fas fa-book"></i> Lerning Section</h1>
+            <p class="tagline">Time and tide wait for no man</p>
+            <button class="btn" id="startBtn">Start</button>
+            <button class="btn" id="loginBtn">Login</button>
+        </div>
+    </div>
+
+    <!-- หน้า Login -->
+    <div class="login-page" id="loginPage">
+        <div class="glass-container">
+            <h2 class="page-title">Login</h2>
+            <div id="loginAlert"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter Username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <div class="form-footer">
+                <p>Not have user? <a href="#" id="registerLink">Register</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- หน้า Register -->
+    <div class="register-page" id="registerPage">
+        <div class="glass-container">
+            <h2 class="page-title">Register</h2>
+            <div id="registerAlert"></div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regUsername">username</label>
+                    <input type="text" id="regUsername" class="form-control" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" class="form-control" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" class="form-control" placeholder="Enter password" required>
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">ConfirmPassword</label>
+                    <input type="password" id="regConfirmPassword" class="form-control" placeholder="Enter password again" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+            </form>
+            <div class="form-footer">
+                <p>Already have accout? <a href="#" id="loginLink">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- หน้า Home -->
+    <div class="home-page" id="homePage">
+        <div class="glass-container">
+            <h2 class="page-title">Welcome <span id="userName">username</span>!</h2>
+            
+            <div class="timer-container">
+                <div class="timer" id="timerDisplay">00:00:00</div>
+                <div class="timer-controls">
+                    <button class="btn" id="startTimerBtn"><i class="fas fa-play"></i> Start</button>
+                    <button class="btn" id="pauseTimerBtn"><i class="fas fa-pause"></i> Pause</button>
+                    <button class="btn" id="stopTimerBtn"><i class="fas fa-stop"></i> Stop</button>
+                </div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-label">Today read time</div>
+                    <div class="stat-value" id="todayTime">00:00:00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">total read time</div>
+                    <div class="stat-value" id="totalTime">00:00:00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Number of time you reads</div>
+                    <div class="stat-value" id="sessionCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Rank</div>
+                    <div class="stat-value" id="userRank">-</div>
+                </div>
+            </div>
+            
+            <div class="nav">
+                <button class="btn" id="leaderboardBtn"><i class="fas fa-trophy"></i> Leaderboard</button>
+                <button class="btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- หน้า Leaderboard -->
+    <div class="leaderboard-page" id="leaderboardPage">
+        <div class="glass-container">
+            <h2 class="page-title">Leaderboard</h2>
+            
+            <div class="leaderboard-list" id="leaderboardList">
+                <!-- ข้อมูลผู้นำจะถูกเพิ่มโดย JavaScript -->
+            </div>
+            
+            <div class="nav">
+                <button class="btn" id="backToHomeBtn"><i class="fas fa-arrow-left"></i> Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ควบคุมเพลง -->
+    <div class="music-controls">
+        <button class="music-btn" id="playMusicBtn"><i class="fas fa-play"></i></button>
+        <button class="music-btn" id="pauseMusicBtn"><i class="fas fa-pause"></i></button>
+        <span>Music</span>
+        <input type="file" id="musicUpload" accept="audio/*" style="display: none;">
+        <button class="music-btn" id="uploadMusicBtn"><i class="fas fa-upload"></i></button>
+    </div>
+
+    <!-- เพลงพื้นหลัง -->
+    <audio id="backgroundMusic" loop>
+        <!-- เพลงเริ่มต้นจะถูกโหลดจาก URL ภายนอก -->
+    </audio>
+
+    <script>
+        // ตัวแปรสำหรับการทำงาน
+        let timerInterval;
+        let seconds = 0;
+        let isTimerRunning = false;
+        let currentUser = null;
+        let userStats = {};
+        let allUsers = {};
+
+        // DOM Elements
+        const landingPage = document.getElementById('landingPage');
+        const loginPage = document.getElementById('loginPage');
+        const registerPage = document.getElementById('registerPage');
+        const homePage = document.getElementById('homePage');
+        const leaderboardPage = document.getElementById('leaderboardPage');
+        
+        const startBtn = document.getElementById('startBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const registerLink = document.getElementById('registerLink');
+        const loginLink = document.getElementById('loginLink');
+        const startTimerBtn = document.getElementById('startTimerBtn');
+        const pauseTimerBtn = document.getElementById('pauseTimerBtn');
+        const stopTimerBtn = document.getElementById('stopTimerBtn');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const leaderboardBtn = document.getElementById('leaderboardBtn');
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const leaderboardList = document.getElementById('leaderboardList');
+        
+        const playMusicBtn = document.getElementById('playMusicBtn');
+        const pauseMusicBtn = document.getElementById('pauseMusicBtn');
+        const uploadMusicBtn = document.getElementById('uploadMusicBtn');
+        const musicUpload = document.getElementById('musicUpload');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        // เริ่มต้นด้วยการโหลดข้อมูลจาก localStorage
+        loadUserData();
+
+        // Event Listeners
+        startBtn.addEventListener('click', () => {
+            landingPage.style.display = 'none';
+            loginPage.style.display = 'block';
+        });
+
+        loginBtn.addEventListener('click', () => {
+            landingPage.style.display = 'none';
+            loginPage.style.display = 'block';
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (loginUser(username, password)) {
+                currentUser = username;
+                document.getElementById('userName').textContent = username;
+                updateUserStatsDisplay();
+                
+                loginPage.style.display = 'none';
+                homePage.style.display = 'block';
+                showAlert('loginAlert', 'Success!', 'success');
+            } else {
+                showAlert('loginAlert', 'Username or Password incorrect', 'error');
+            }
+        });
+
+        registerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginPage.style.display = 'none';
+            registerPage.style.display = 'block';
+        });
+
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            registerPage.style.display = 'none';
+            loginPage.style.display = 'block';
+        });
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showAlert('registerAlert', 'Not the same', 'error');
+                return;
+            }
+            
+            if (registerUser(username, email, password)) {
+                showAlert('registerAlert', 'success! ', 'success');
+                setTimeout(() => {
+                    registerPage.style.display = 'none';
+                    loginPage.style.display = 'block';
+                    document.getElementById('registerForm').reset();
+                }, 1500);
+            } else {
+                showAlert('registerAlert', 'Name existing!', 'error');
+            }
+        });
+
+        startTimerBtn.addEventListener('click', startTimer);
+        pauseTimerBtn.addEventListener('click', pauseTimer);
+        stopTimerBtn.addEventListener('click', stopTimer);
+
+        leaderboardBtn.addEventListener('click', () => {
+            homePage.style.display = 'none';
+            leaderboardPage.style.display = 'block';
+            renderLeaderboard();
+        });
+
+        backToHomeBtn.addEventListener('click', () => {
+            leaderboardPage.style.display = 'none';
+            homePage.style.display = 'block';
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            currentUser = null;
+            homePage.style.display = 'none';
+            landingPage.style.display = 'block';
+            resetTimer();
+            document.getElementById('loginForm').reset();
+        });
+
+        playMusicBtn.addEventListener('click', () => {
+            backgroundMusic.play();
+        });
+
+        pauseMusicBtn.addEventListener('click', () => {
+            backgroundMusic.pause();
+        });
+
+        uploadMusicBtn.addEventListener('click', () => {
+            musicUpload.click();
+        });
+
+        musicUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const objectURL = URL.createObjectURL(file);
+                backgroundMusic.src = objectURL;
+                backgroundMusic.play();
+            }
+        });
+
+        // ฟังก์ชันสำหรับจัดการผู้ใช้
+        function registerUser(username, email, password) {
+            if (allUsers[username]) {
+                return false; // มีผู้ใช้นี้แล้ว
+            }
+            
+            allUsers[username] = {
+                email: email,
+                password: password, // ในระบบจริงควรเข้ารหัส
+                totalReadingTime: 0,
+                todayReadingTime: 0,
+                sessionCount: 0,
+                joinDate: new Date().toISOString()
+            };
+            
+            saveUserData();
+            return true;
+        }
+
+        function loginUser(username, password) {
+            if (allUsers[username] && allUsers[username].password === password) {
+                return true;
+            }
+            return false;
+        }
+
+        // ฟังก์ชันสำหรับจับเวลา
+        function startTimer() {
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    updateTimerDisplay();
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            if (isTimerRunning) {
+                isTimerRunning = false;
+                clearInterval(timerInterval);
+            }
+        }
+
+        function stopTimer() {
+            if (isTimerRunning) {
+                isTimerRunning = false;
+                clearInterval(timerInterval);
+                
+                // บันทึกสถิติ
+                if (currentUser && seconds > 0) {
+                    allUsers[currentUser].totalReadingTime += seconds;
+                    allUsers[currentUser].todayReadingTime += seconds;
+                    allUsers[currentUser].sessionCount += 1;
+                    saveUserData();
+                    updateUserStatsDisplay();
+                    
+                    alert(`save time: ${formatTime(seconds)}`);
+                }
+                
+                resetTimer();
+            }
+        }
+
+        function resetTimer() {
+            seconds = 0;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            timerDisplay.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const secs = totalSeconds % 60;
+            
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // ฟังก์ชันสำหรับแสดงกระดานผู้นำ
+        function renderLeaderboard() {
+            leaderboardList.innerHTML = '';
+            
+            // สร้างอาร์เรย์จากผู้ใช้ทั้งหมดและเรียงลำดับตามเวลาอ่าน
+            const usersArray = Object.keys(allUsers).map(username => {
+                return {
+                    username: username,
+                    totalReadingTime: allUsers[username].totalReadingTime
+                };
+            });
+            
+            // เรียงลำดับจากมากไปน้อย
+            usersArray.sort((a, b) => b.totalReadingTime - a.totalReadingTime);
+            
+            // แสดงเฉพาะ 10 อันดับแรก
+            const topUsers = usersArray.slice(0, 10);
+            
+            topUsers.forEach((user, index) => {
+                const leaderboardItem = document.createElement('div');
+                leaderboardItem.className = 'leaderboard-item';
+                
+                const rankClass = index < 3 ? `rank-${index+1}` : '';
+                
+                leaderboardItem.innerHTML = `
+                    <div class="rank ${rankClass}">${index + 1}</div>
+                    <div class="user-info">${user.username} ${user.username === currentUser ? '(You)' : ''}</div>
+                    <div class="reading-time">${formatTime(user.totalReadingTime)}</div>
+                `;
+                
+                leaderboardList.appendChild(leaderboardItem);
+            });
+            
+            // อัปเดตอันดับของผู้ใช้ปัจจุบัน
+            const currentUserIndex = usersArray.findIndex(user => user.username === currentUser);
+            document.getElementById('userRank').textContent = currentUserIndex !== -1 ? currentUserIndex + 1 : '-';
+        }
+
+        // ฟังก์ชันสำหรับอัปเดตการแสดงสถิติ
+        function updateUserStatsDisplay() {
+            if (currentUser && allUsers[currentUser]) {
+                const user = allUsers[currentUser];
+                document.getElementById('todayTime').textContent = formatTime(user.todayReadingTime);
+                document.getElementById('totalTime').textContent = formatTime(user.totalReadingTime);
+                document.getElementById('sessionCount').textContent = user.sessionCount;
+                
+                // อัปเดตอันดับ
+                renderLeaderboard();
+            }
+        }
+
+        // ฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+        function showAlert(containerId, message, type) {
+            const alertContainer = document.getElementById(containerId);
+            alertContainer.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            
+            // ลบข้อความแจ้งเตือนหลังจาก 3 วินาที
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 3000);
+        }
+
+        // ฟังก์ชันสำหรับบันทึกและโหลดข้อมูล
+        function saveUserData() {
+            localStorage.setItem('bookTimeUsers', JSON.stringify(allUsers));
+        }
+
+        function loadUserData() {
+            const savedUsers = localStorage.getItem('bookTimeUsers');
+            if (savedUsers) {
+                allUsers = JSON.parse(savedUsers);
+            } else {
+                // สร้างผู้ใช้ตัวอย่างหากไม่มีข้อมูล
+                allUsers = {
+                    'demo': {
+                        email: 'demo@example.com',
+                        password: 'demo123',
+                        totalReadingTime: 9930, // 2:45:30
+                        todayReadingTime: 1800, // 30 นาที
+                        sessionCount: 12,
+                        joinDate: new Date().toISOString()
+                    }
+                };
+                saveUserData();
+            }
+        }
+
+        // เริ่มต้นด้วยการแสดงหน้าแรก
+        landingPage.style.display = 'flex';
+        loginPage.style.display = 'none';
+        registerPage.style.display = 'none';
+        homePage.style.display = 'none';
+        leaderboardPage.style.display = 'none';
+
+        // เพิ่มเพลงเริ่มต้น (ใช้เพลงฟรีจาก Mixkit)
+        backgroundMusic.src = 'https://assets.mixkit.co/music/preview/mixkit-inspiring-acoustic-873.mp3';
+    </script>
+</body>
+</html>
